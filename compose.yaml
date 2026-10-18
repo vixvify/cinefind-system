@@ -1,0 +1,21 @@
+services:
+  portal:
+    build: ./portal
+    ports:
+      - "3000:3000"
+    environment:
+      AI_SERVICE_URL: http://ai:8000
+    volumes:
+      - ./portal:/app
+      - /app/node_modules
+    depends_on:
+      - ai
+    command: npm run dev -- --hostname 0.0.0.0
+
+  ai:
+    build: ./ai
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
