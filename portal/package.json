@@ -10,15 +10,18 @@
     "test": "node --experimental-strip-types --test tests/*.test.ts"
   },
   "dependencies": {
+    "lucide-react": "latest",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "lucide-react": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "postcss": "8.5.30",
+    "tailwindcss": "4.3.3",
     "typescript": "^5.9.0"
   }
 }
