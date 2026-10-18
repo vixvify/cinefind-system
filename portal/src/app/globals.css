@@ -1,3 +1,12 @@
-* { box-sizing: border-box; }
-body { margin: 0; background: #111210; color: #f5f4ed; font-family: Arial, Tahoma, sans-serif; }
-main { padding: 48px; }
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #111210;
+  color: #f5f4ed;
+  font-family: Arial, Tahoma, sans-serif;
+}
+main {
+  padding: 48px;
+}
