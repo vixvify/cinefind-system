@@ -26,7 +26,7 @@ If your Windows Node manager says no version is active, activate your installed 
 ## Experience
 
 - `/`: search 24 mock movies, filter by genre, and choose exactly five. Remove a choice using its card or the fixed selection bar. Load more to see all movies.
-- `/analyzing?favorites=1,2,3,4,5`: six-second animated sequence using the five selected posters, progress updates, and navigation to results. Cancel returns to the same selection.
+- `/analyzing?favorites=1,2,3,4,5`: four-second animated sequence using the five selected posters, progress updates, and navigation to results. Cancel returns to the same selection.
 - `/results?favorites=1,2,3,4,5`: six unseen recommendations ranked by shared genres, reasons, and a temporary watchlist. Return to edit the original selection.
 - Incomplete or invalid selections show a recovery screen. Valid selection URLs can be refreshed or shared without losing the selected movies. Watchlist state lasts only for the current results view.
 

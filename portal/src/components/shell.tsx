@@ -23,16 +23,10 @@ export function Header() {
             cinefind<span className="brand-dot">.</span>
           </Link>
           <nav aria-label="เมนูหลัก">
-            <Link href="/" className="nav-active">
-              ค้นพบหนัง
-            </Link>
             <button onClick={() => dialog.current?.showModal()}>
-              ทำงานอย่างไร <ArrowUpRight size={14} />
+              วิธีใช้ <ArrowUpRight size={14} />
             </button>
           </nav>
-          <span className="header-note">
-            <span /> FOR THE LOVE OF CINEMA
-          </span>
         </div>
       </header>
       <dialog
@@ -49,7 +43,6 @@ export function Header() {
         >
           <X />
         </button>
-        <span className="eyebrow">A LITTLE TASTE. A NEW DISCOVERY.</span>
         <h2>หนังที่ใช่ เริ่มจากคุณ</h2>
         <div className="how-step">
           <Heart />
@@ -110,8 +103,7 @@ export function Footer() {
       <span>
         cinefind<span className="brand-dot">.</span>
       </span>
-      <p>Every great movie starts with a little discovery.</p>
-      <small>สร้างมาเพื่อคนรักหนัง · UI DEMO</small>
+      <small>ข้อมูลจำลอง · ยังไม่มี AI</small>
     </footer>
   );
 }

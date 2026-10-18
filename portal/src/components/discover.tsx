@@ -5,13 +5,8 @@ import {
   ArrowDown,
   ArrowRight,
   Check,
-  CheckCheck,
-  Heart,
   Plus,
   Search,
-  SlidersHorizontal,
-  Sparkles,
-  Star,
   X,
 } from "lucide-react";
 import {
@@ -21,7 +16,7 @@ import {
   SELECTION_LIMIT,
   type Genre,
 } from "@/lib/movies";
-import { Header, Footer, Steps } from "./shell";
+import { Header, Footer } from "./shell";
 import { Poster } from "./poster";
 
 export function Discover() {
@@ -59,32 +54,8 @@ export function Discover() {
       <main className="page discover-page">
         <section className="hero">
           <div className="hero-copy">
-            <span className="eyebrow">
-              <span className="tiny-line" /> YOUR NEXT FAVORITE FILM
-            </span>
-            <h1>
-              หนังมีเป็นพันเรื่อง
-              <br />
-              แต่เรื่องที่ <em>“ใช่”</em> มีไว้ให้คุณ
-            </h1>
-            <p>
-              บอกเราว่าคุณรักหนังเรื่องไหน
-              <br className="mobile-break" /> แล้วให้ cinefind
-              พาคุณไปเจอเรื่องโปรดเรื่องถัดไป
-            </p>
-            <a href="#discover" className="hero-link">
-              เริ่มจากหนังที่คุณรัก 5 เรื่อง <ArrowDown size={16} />
-            </a>
-            <div className="hero-proof">
-              <span className="mini-avatars">
-                <span>🎬</span>
-                <span>🍿</span>
-                <span>✦</span>
-              </span>
-              <span>
-                สำหรับทุกคนที่เคยถามว่า <strong>“คืนนี้ดูอะไรดี?”</strong>
-              </span>
-            </div>
+            <h1>คืนนี้ <em>ดูอะไรดี?</em></h1>
+            <p>เลือกหนังที่ชอบ 5 เรื่อง แล้วเจอเรื่องใหม่ที่ใช่</p>
           </div>
           <div className="hero-art" aria-hidden="true">
             <div className="hero-glow" />
@@ -98,28 +69,17 @@ export function Discover() {
                 </div>
               ))}
             </div>
-            <span className="floating-note">
-              <Sparkles size={16} /> A little more you.
-            </span>
-            <span className="art-caption">GOOD FILMS. GREAT FEELINGS.</span>
-            <span className="orbit-star">✳</span>
           </div>
         </section>
-        <Steps current={1} />
         <section id="discover" className="catalog">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">THE ONES YOU LOVE</span>
-              <h2>
-                เลือก 5 เรื่องที่เป็นคุณ<span className="heading-dot">.</span>
-              </h2>
-              <p>เรื่องที่ดูซ้ำได้ไม่เบื่อ หรือเรื่องที่ยังอยู่ในใจคุณเสมอ</p>
+              <h2>เลือกหนังที่ชอบ</h2>
             </div>
             <span
               className={`selection-count ${ready ? "ready" : ""}`}
               aria-live="polite"
             >
-              <Heart size={16} /> เลือกแล้ว{" "}
               <strong>{selected.length} / 5</strong>
             </span>
           </div>
@@ -167,17 +127,7 @@ export function Discover() {
               )}
             </label>
           </div>
-          <div className="catalog-meta">
-            <span>
-              <SlidersHorizontal size={13} />{" "}
-              {genre === "all"
-                ? "คัดมาให้ หลากหลายแนว"
-                : `หนัง${genreLabels[genre]}`}{" "}
-              <span className="meta-dot">·</span> {filtered.length} เรื่อง
-            </span>
-            <small>เลือกตามใจ ไม่มีคำตอบที่ผิด</small>
-          </div>
-          <div className="movie-grid">
+          <div className="movie-grid mt-6">
             {filtered.slice(0, visible).map((movie, index) => {
               const isSelected = selected.includes(movie.id);
               return (
@@ -191,10 +141,6 @@ export function Discover() {
                 >
                   <div className="movie-image">
                     <Poster movie={movie} eager={index < 6} />
-                    <span className="rating">
-                      <Star size={11} fill="currentColor" />
-                      {movie.rating}
-                    </span>
                     <span className="select-mark">
                       {isSelected ? (
                         <Check size={18} strokeWidth={3} />
@@ -202,11 +148,6 @@ export function Discover() {
                         <Plus size={19} />
                       )}
                     </span>
-                    {isSelected && (
-                      <span className="selected-label">
-                        <Check size={13} /> อยู่ในลิสต์ของคุณ
-                      </span>
-                    )}
                   </div>
                   <h3>{movie.title}</h3>
                   <div className="movie-meta">
@@ -222,7 +163,6 @@ export function Discover() {
             <div className="empty-state">
               <Search size={30} />
               <h3>ยังไม่เจอหนังที่ค้นหา</h3>
-              <p>ลองชื่อภาษาอังกฤษ หรือเลือกดูจากแนวหนัง</p>
               <button
                 className="text-button"
                 onClick={() => {
@@ -242,27 +182,13 @@ export function Discover() {
               ดูหนังเพิ่มเติม <ArrowDown size={16} />
             </button>
           )}
-          <p className="catalog-footnote">
-            หนังดีไม่จำเป็นต้องเหมือนกัน แค่เป็นเรื่องที่คุณชอบก็พอ{" "}
-            <Heart size={12} />
-          </p>
         </section>
         <Footer />
       </main>
       <section className="selection-dock" aria-label="หนังที่เลือก">
         <div className="dock-inner">
           <div className="dock-intro">
-            <span className="eyebrow">YOUR STARTING FIVE</span>
-            <h3>
-              {ready
-                ? "พร้อมเจอเรื่องโปรดใหม่แล้ว?"
-                : "รสนิยมของคุณ เริ่มตรงนี้"}
-            </h3>
-            <p aria-live="polite">
-              {ready
-                ? "เลือกครบแล้ว ไปค้นพบหนังที่ใช่กัน"
-                : `เลือกอีก ${5 - selected.length} เรื่อง แล้วออกเดินทางกัน`}
-            </p>
+            <h3 aria-live="polite">{ready ? "ครบ 5 เรื่องแล้ว" : `เลือกอีก ${5 - selected.length} เรื่อง`}</h3>
           </div>
           <div className="selected-slots">
             {Array.from({ length: 5 }, (_, index) => {
@@ -295,8 +221,7 @@ export function Discover() {
               router.push(`/analyzing?favorites=${selected.join(",")}`)
             }
           >
-            {ready ? <Sparkles size={17} /> : <CheckCheck size={17} />}{" "}
-            ค้นหาหนังที่ใช่ <ArrowRight size={17} />
+            ถัดไป <ArrowRight size={17} />
           </button>
         </div>
       </section>
