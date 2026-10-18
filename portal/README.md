@@ -1,6 +1,6 @@
 # cinefind / portal
 
-Movie discovery UI built with **Next.js App Router, TypeScript, React, Tailwind CSS v4, and Lucide icons**. All application code lives in `/portal`. The sibling `/ai` directory is reserved and intentionally empty; no AI service is implemented. Git does not track empty directories.
+Movie discovery UI built with **Next.js App Router, TypeScript, React, Tailwind CSS v4, and Lucide icons**. All portal application code lives in `/portal`. The sibling `/ai` directory is maintained separately; this portal uses only local mock data and does not integrate with it.
 
 ## Run locally
 
