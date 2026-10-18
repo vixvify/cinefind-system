@@ -1,3 +1,11 @@
+import { Suspense } from "react";
+import { Discover } from "@/components/discover";
 export default function Home() {
-  return <main><h1>cinefind</h1><p>หนังเรื่องถัดไปที่ใช่สำหรับคุณ</p></main>;
+  return (
+    <Suspense
+      fallback={<main className="page loading-page">กำลังเปิดโรงหนัง…</main>}
+    >
+      <Discover />
+    </Suspense>
+  );
 }
