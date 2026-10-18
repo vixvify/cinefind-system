@@ -144,3 +144,8 @@ jupyter notebook
 Open the notebook in the `notebooks/` directory to explore the dataset and experiment with the recommendation model.
 
 > **Note:** The AI service and Next.js integration are still under development.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
