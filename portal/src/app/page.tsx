@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Discover } from "@/components/discover";
+
 export default function Home() {
   return (
     <Suspense

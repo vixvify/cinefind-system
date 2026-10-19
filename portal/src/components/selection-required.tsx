@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Film } from "lucide-react";
+
 export function SelectionRequired() {
   return (
     <div className="mx-auto flex min-h-[65vh] max-w-md flex-col items-center justify-center gap-5 text-center">

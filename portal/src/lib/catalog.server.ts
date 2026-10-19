@@ -4,52 +4,65 @@ import path from "node:path";
 import { parseMovieDataset } from "./dataset";
 import type { Movie } from "./movies";
 
-let cached:
-  | { path: string; modified: number; size: number; movies: Movie[] }
-  | undefined;
+interface CachedDataset {
+  filePath: string;
+  mtimeMs: number;
+  size: number;
+  movies: Movie[];
+}
+
+let datasetCache: CachedDataset | null = null;
+
+function resolveDatasetPath(): string {
+  if (process.env.MOVIE_DATASET_PATH) {
+    return path.resolve(process.env.MOVIE_DATASET_PATH);
+  }
+  return path.resolve(process.cwd(), "..", "ai", "data", "raw", "tmdb_5000_movies.csv");
+}
+
 export async function getDataset(): Promise<Movie[]> {
-  const filename = path.resolve(
-    process.env.MOVIE_DATASET_PATH ||
-      path.join(
-        process.cwd(),
-        "..",
-        "ai",
-        "data",
-        "raw",
-        "tmdb_5000_movies.csv",
-      ),
-  );
+  const filePath = resolveDatasetPath();
+
   try {
-    const info = await stat(filename);
+    const fileStat = await stat(filePath);
+
     if (
-      cached?.path === filename &&
-      cached.modified === info.mtimeMs &&
-      cached.size === info.size
-    )
-      return cached.movies;
-    const movies = parseMovieDataset(await readFile(filename, "utf8"));
-    cached = {
-      path: filename,
-      modified: info.mtimeMs,
-      size: info.size,
+      datasetCache &&
+      datasetCache.filePath === filePath &&
+      datasetCache.mtimeMs === fileStat.mtimeMs &&
+      datasetCache.size === fileStat.size
+    ) {
+      return datasetCache.movies;
+    }
+
+    const fileContent = await readFile(filePath, "utf8");
+    const movies = parseMovieDataset(fileContent);
+
+    datasetCache = {
+      filePath,
+      mtimeMs: fileStat.mtimeMs,
+      size: fileStat.size,
       movies,
     };
+
     return movies;
-  } catch {
+  } catch (error) {
     throw new Error(
       "Cannot load movie dataset. Check MOVIE_DATASET_PATH and the tmdb_5000_movies.csv file or Docker data mount.",
+      { cause: error },
     );
   }
 }
 
 export async function getCatalog(): Promise<Movie[]> {
   const movies = await getDataset();
-  const postersEnabled = Boolean(
+  const hasTmdbCredentials = Boolean(
     process.env.TMDB_READ_ACCESS_TOKEN?.trim() ||
     process.env.TMDB_API_KEY?.trim(),
   );
+
   return movies.map((movie) => ({
     ...movie,
-    poster: postersEnabled ? `/api/posters/${movie.id}` : null,
+    poster: hasTmdbCredentials ? `/api/posters/${movie.id}` : null,
   }));
 }

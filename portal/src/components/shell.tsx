@@ -1,4 +1,6 @@
 "use client";
+
+import { useRef, type MouseEvent } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -8,10 +10,30 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { useRef } from "react";
+
+interface StepsProps {
+  current: 1 | 2 | 3;
+}
+
+const STEP_LABELS = ["เลือกหนังที่ชอบ", "ค้นหารสนิยม", "พบหนังที่ใช่"] as const;
 
 export function Header() {
-  const dialog = useRef<HTMLDialogElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  function openDialog() {
+    dialogRef.current?.showModal();
+  }
+
+  function closeDialog() {
+    dialogRef.current?.close();
+  }
+
+  function handleBackdropClick(event: MouseEvent<HTMLDialogElement>) {
+    if (event.target === event.currentTarget) {
+      closeDialog();
+    }
+  }
+
   return (
     <>
       <header className="site-header">
@@ -22,28 +44,31 @@ export function Header() {
             </span>
             cinefind<span className="brand-dot">.</span>
           </Link>
+
           <nav aria-label="เมนูหลัก">
-            <button onClick={() => dialog.current?.showModal()}>
+            <button type="button" onClick={openDialog}>
               วิธีใช้ <ArrowUpRight size={14} />
             </button>
           </nav>
         </div>
       </header>
+
       <dialog
-        ref={dialog}
+        ref={dialogRef}
         className="how-dialog"
-        onClick={(event) => {
-          if (event.target === event.currentTarget) dialog.current?.close();
-        }}
+        onClick={handleBackdropClick}
       >
         <button
+          type="button"
           className="icon-button dialog-close"
-          aria-label="ปิด"
-          onClick={() => dialog.current?.close()}
+          aria-label="ปิดหน้าต่างวิธีใช้"
+          onClick={closeDialog}
         >
-          <X />
+          <X size={16} />
         </button>
+
         <h2>หนังที่ใช่ เริ่มจากคุณ</h2>
+
         <div className="how-step">
           <Heart />
           <div>
@@ -51,6 +76,7 @@ export function Header() {
             <p>ไม่ต้องคิดมาก เลือกเรื่องที่ดูแล้วรู้สึกว่า “ใช่เลย”</p>
           </div>
         </div>
+
         <div className="how-step">
           <Sparkles />
           <div>
@@ -58,6 +84,7 @@ export function Header() {
             <p>ดูแอนิเมชันระหว่างจับคู่แนวหนังที่คุณเลือก</p>
           </div>
         </div>
+
         <div className="how-step">
           <Film />
           <div>
@@ -65,10 +92,11 @@ export function Header() {
             <p>รับลิสต์หนัง 6 เรื่อง พร้อมเหตุผลที่น่าจะถูกใจคุณ</p>
           </div>
         </div>
+
         <p className="demo-note">
-          ข้อมูลหนังจาก TMDB 5000 · ผลแนะนำยังใช้การจับคู่แนวหนัง
-          ไม่ได้เชื่อมระบบ AI
+          ข้อมูลหนังจาก TMDB 5000 · ผลแนะนำยังใช้การจับคู่แนวหนัง ไม่ได้เชื่อมระบบ AI
         </p>
+
         <p className="mt-3 text-[10px] leading-5 text-muted">
           <a
             href="https://www.themoviedb.org"
@@ -79,37 +107,42 @@ export function Header() {
             TMDB
           </a>
           <br />
-          This product uses the TMDB API but is not endorsed or certified by
-          TMDB.
+          This product uses the TMDB API but is not endorsed or certified by TMDB.
         </p>
       </dialog>
     </>
   );
 }
-export function Steps({ current }: { current: 1 | 2 | 3 }) {
+
+export function Steps({ current }: StepsProps) {
   return (
     <ol className="steps" aria-label="ขั้นตอนการค้นพบหนัง">
-      {["เลือกหนังที่ชอบ", "ค้นหารสนิยม", "พบหนังที่ใช่"].map(
-        (label, index) => (
+      {STEP_LABELS.map((label, index) => {
+        const stepNumber = index + 1;
+        const isCurrent = current === stepNumber;
+        const isComplete = current > stepNumber;
+
+        const stateClass = isCurrent
+          ? "current"
+          : isComplete
+            ? "complete"
+            : "";
+
+        return (
           <li
             key={label}
-            className={
-              current === index + 1
-                ? "current"
-                : current > index + 1
-                  ? "complete"
-                  : ""
-            }
-            aria-current={current === index + 1 ? "step" : undefined}
+            className={stateClass}
+            aria-current={isCurrent ? "step" : undefined}
           >
-            <span>{current > index + 1 ? "✓" : `0${index + 1}`}</span>
+            <span>{isComplete ? "✓" : `0${stepNumber}`}</span>
             {label}
           </li>
-        ),
-      )}
+        );
+      })}
     </ol>
   );
 }
+
 export function Footer() {
   return (
     <footer className="site-footer">

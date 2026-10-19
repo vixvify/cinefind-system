@@ -1,20 +1,27 @@
 "use client";
-import { createContext, useContext } from "react";
+
+import { createContext, useContext, type ReactNode } from "react";
 import type { Movie } from "@/lib/movies";
-const CatalogContext = createContext<Movie[] | null>(null);
-export function CatalogProvider({
-  movies,
-  children,
-}: {
+
+interface CatalogProviderProps {
   movies: Movie[];
-  children: React.ReactNode;
-}) {
+  children: ReactNode;
+}
+
+const CatalogContext = createContext<Movie[] | null>(null);
+
+export function CatalogProvider({ movies, children }: CatalogProviderProps) {
   return (
-    <CatalogContext.Provider value={movies}>{children}</CatalogContext.Provider>
+    <CatalogContext.Provider value={movies}>
+      {children}
+    </CatalogContext.Provider>
   );
 }
-export function useMovies() {
+
+export function useMovies(): Movie[] {
   const movies = useContext(CatalogContext);
-  if (!movies) throw new Error("Movie catalog is not available.");
+  if (!movies) {
+    throw new Error("useMovies must be used within a CatalogProvider.");
+  }
   return movies;
 }

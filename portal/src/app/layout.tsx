@@ -11,7 +11,20 @@ export const metadata: Metadata = {
   description: "เลือกหนังที่คุณรัก 5 เรื่อง แล้วค้นพบหนังเรื่องโปรดเรื่องถัดไปกับ cinefind — UI demo",
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const movies = await getCatalog();
-  return <html lang="th"><body><CatalogProvider movies={movies}>{children}</CatalogProvider></body></html>;
+
+  return (
+    <html lang="th">
+      <body>
+        <CatalogProvider movies={movies}>
+          {children}
+        </CatalogProvider>
+      </body>
+    </html>
+  );
 }
