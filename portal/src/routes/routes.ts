@@ -5,6 +5,7 @@ export const APP_ROUTES = {
 } as const;
 
 export const API_ROUTES = {
+  RECOMMENDATIONS: "/api/recommendations",
   POSTER: (id: number | string) => `/api/posters/${id}`,
 } as const;
 

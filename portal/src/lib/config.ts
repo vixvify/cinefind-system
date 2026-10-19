@@ -26,7 +26,12 @@ export const serverConfig: ServerConfig = {
     return process.env.TMDB_API_KEY?.trim();
   },
   get aiServiceUrl(): string {
-    return process.env.AI_SERVICE_URL?.trim() || "http://ai:8000";
+    const value = process.env.AI_SERVICE_URL?.trim() || "http://127.0.0.1:8000";
+    const url = new URL(value);
+    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || url.search || url.hash) {
+      throw new Error("AI_SERVICE_URL must be an HTTP(S) base URL without credentials, query or fragment.");
+    }
+    return url.toString().replace(/\/$/, "");
   },
   get hasTmdbCredentials(): boolean {
     return Boolean(
