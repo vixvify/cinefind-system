@@ -1,17 +1,17 @@
-# 🎬 CineFind
+# CineFind
 
 **Discover your next favorite movie with AI-powered recommendations.**
 
 CineFind is a movie recommendation web application that helps users discover movies based on their interests. It uses machine learning and content-based filtering to recommend movies with similar characteristics, such as genres, keywords, cast, directors, and plot descriptions.
 
-## ✨ Features
+## Features
 
-- 🎯 **Personalized Movie Recommendations** — Discover similar movies using machine learning.
-- 🔎 **Movie Discovery** — Explore movies and find content that matches your interests.
-- 🧠 **Content-Based Filtering** — Analyze movie metadata to identify similarities.
-- 🎭 **Metadata Analysis** — Generate recommendations using genres, keywords, cast, directors, and overviews.
+- **Personalized Movie Recommendations** — Discover similar movies using machine learning.
+- **Movie Discovery** — Explore movies and find content that matches your interests.
+- **Content-Based Filtering** — Analyze movie metadata to identify similarities.
+- **Metadata Analysis** — Generate recommendations using genres, keywords, cast, directors, and overviews.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Category         | Technologies               |
 | ---------------- | -------------------------- |
@@ -23,7 +23,7 @@ CineFind is a movie recommendation web application that helps users discover mov
 | Development      | Jupyter Notebook           |
 | Dataset          | TMDB 5000 Movie Dataset    |
 
-## 🧠 Recommendation System
+## Recommendation System
 
 CineFind uses a **Content-Based Filtering** approach to recommend movies based on their metadata.
 
@@ -59,7 +59,7 @@ The recommendation pipeline consists of:
            Recommendations
 ```
 
-## 🏗️ Project Structure
+## Project Structure
 
 The project is organized into two main applications:
 
@@ -80,7 +80,7 @@ cinefind/
 └── README.md
 ```
 
-## 📊 Dataset
+## Dataset
 
 This project uses the **TMDB 5000 Movie Dataset**, which includes movie information such as:
 
@@ -91,7 +91,7 @@ This project uses the **TMDB 5000 Movie Dataset**, which includes movie informat
 
 Dataset: [TMDB 5000 Movie Dataset — Kaggle](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
