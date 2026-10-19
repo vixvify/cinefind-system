@@ -95,7 +95,7 @@ export function Header() {
         </div>
 
         <p className="demo-note">
-          ข้อมูลหนังจาก TMDB 5000 · ผลแนะนำยังใช้การจับคู่แนวหนัง ไม่ได้เชื่อมระบบ AI
+          ข้อมูลหนังจาก TMDB 5000 · แนะนำโดย CineFind AI
         </p>
 
         <p className="mt-3 text-[10px] leading-5 text-muted">
@@ -150,7 +150,7 @@ export function Footer() {
       <span>
         cinefind<span className="brand-dot">.</span>
       </span>
-      <small>TMDB 5000 · ผลแนะนำจำลอง</small>
+      <small>TMDB 5000 · CineFind AI</small>
     </footer>
   );
 }

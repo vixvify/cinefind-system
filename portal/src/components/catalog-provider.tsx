@@ -2,6 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import type { Movie } from "@/core/domain/movie";
+import { RecommendationProvider } from "./recommendations/recommendation-provider";
 
 interface CatalogProviderProps {
   movies: Movie[];
@@ -13,7 +14,7 @@ const CatalogContext = createContext<Movie[] | null>(null);
 export function CatalogProvider({ movies, children }: CatalogProviderProps) {
   return (
     <CatalogContext.Provider value={movies}>
-      {children}
+      <RecommendationProvider>{children}</RecommendationProvider>
     </CatalogContext.Provider>
   );
 }

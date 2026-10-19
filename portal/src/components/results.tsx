@@ -3,132 +3,19 @@
 import { useState, useMemo, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Bookmark, Check, RotateCcw, Star } from "lucide-react";
+import { ArrowLeft, Bookmark, RotateCcw } from "lucide-react";
 import {
-  genreLabels,
   SELECTION_LIMIT,
 } from "@/core/constants/movie.constant";
-import type { RecommendedMovie } from "@/core/domain/movie";
-import { parseSelection, recommend } from "@/lib/movies";
+import { parseSelection } from "@/lib/movies";
 import { buildHomeWithFavoritesUrl } from "@/routes/routes";
 import { Header, Footer } from "./shell";
-import { Poster } from "./poster";
+import { FeaturedMovieBanner, RecommendedCard } from "./recommendations/recommendation-cards";
+import { RecommendationStatus } from "./recommendations/recommendation-status";
+import { useRecommendations } from "./recommendations/use-recommendations";
+import { PageShell } from "./page-shell";
 import { SelectionRequired } from "./selection-required";
 import { useMovies } from "./catalog-provider";
-
-interface FeaturedMovieProps {
-  movie: RecommendedMovie;
-  isSaved: boolean;
-  onToggleSaved: (id: number) => void;
-}
-
-function FeaturedMovieBanner({
-  movie,
-  isSaved,
-  onToggleSaved,
-}: FeaturedMovieProps) {
-  return (
-    <section
-      className="relative isolate overflow-hidden rounded-xl border border-line bg-surface"
-      aria-label="หนังแนะนำอันดับหนึ่ง"
-    >
-      <div
-        className="pointer-events-none absolute inset-0 -z-1 opacity-15 blur-3xl"
-        aria-hidden="true"
-      >
-        <Poster movie={movie} eager />
-      </div>
-
-      <div className="grid grid-cols-[1fr_110px] items-center gap-5 p-5 sm:grid-cols-[1fr_200px] sm:gap-10 sm:p-9 lg:px-12">
-        <div>
-          <span className="text-[10px] text-lime font-medium">แนะนำสำหรับคุณ</span>
-          <h2 className="mt-3 text-2xl leading-tight font-medium sm:text-4xl">
-            {movie.title}
-          </h2>
-
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-muted">
-            <span className="flex items-center gap-1 text-[#e5d594]">
-              <Star size={12} fill="currentColor" /> {movie.rating}
-            </span>
-            {movie.year && (
-              <>
-                <span>·</span>
-                <span>{movie.year}</span>
-              </>
-            )}
-            {movie.genres.length > 0 && (
-              <>
-                <span>·</span>
-                <span>{genreLabels[movie.genres[0]]}</span>
-              </>
-            )}
-          </div>
-
-          <p className="mt-4 max-w-md text-xs leading-6 text-paper/75">
-            {movie.reason}
-          </p>
-
-          <button
-            type="button"
-            className="primary-button mt-5 px-4 py-2.5 text-xs"
-            aria-pressed={isSaved}
-            onClick={() => onToggleSaved(movie.id)}
-          >
-            {isSaved ? <Check size={14} /> : <Bookmark size={14} />}
-            {isSaved ? "เก็บแล้ว" : "เก็บไว้ดู"}
-          </button>
-        </div>
-
-        <div className="rotate-3 overflow-hidden rounded-md border-2 border-white/10 shadow-2xl">
-          <Poster movie={movie} eager />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-interface RecommendedCardProps {
-  movie: RecommendedMovie;
-  isSaved: boolean;
-  onToggleSaved: (id: number) => void;
-}
-
-function RecommendedCard({
-  movie,
-  isSaved,
-  onToggleSaved,
-}: RecommendedCardProps) {
-  return (
-    <article className="min-w-0">
-      <div className="movie-image">
-        <Poster movie={movie} />
-        <button
-          type="button"
-          className={`absolute top-2 right-2 z-2 grid size-8 place-items-center rounded-full border transition-colors ${
-            isSaved
-              ? "border-lime bg-lime text-cinema"
-              : "border-white/30 bg-cinema/80 text-paper hover:border-white/60"
-          }`}
-          aria-label={`${isSaved ? "เลิกเก็บ" : "เก็บไว้ดู"} ${movie.title}`}
-          aria-pressed={isSaved}
-          onClick={() => onToggleSaved(movie.id)}
-        >
-          <Bookmark size={14} fill={isSaved ? "currentColor" : "none"} />
-        </button>
-      </div>
-
-      <h3 className="mt-3 text-sm leading-6 font-medium truncate">
-        {movie.title}
-      </h3>
-
-      <p className="mt-1 text-[11px] text-muted">
-        {movie.year && <span>{movie.year}</span>}
-        {movie.year && movie.genres.length > 0 && <span> · </span>}
-        {movie.genres.length > 0 && <span>{genreLabels[movie.genres[0]]}</span>}
-      </p>
-    </article>
-  );
-}
 
 export function Results() {
   const movies = useMovies();
@@ -138,10 +25,8 @@ export function Results() {
     return parseSelection(searchParams.get("favorites"), movies);
   }, [searchParams, movies]);
 
-  const recommendations = useMemo(() => {
-    if (selectedMovies.length !== SELECTION_LIMIT) return [];
-    return recommend(selectedMovies, movies);
-  }, [selectedMovies, movies]);
+  const result = useRecommendations(selectedMovies);
+  const recommendations = result.movies;
 
   const [savedIds, setSavedIds] = useState<number[]>([]);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
@@ -167,7 +52,7 @@ export function Results() {
     );
   }, []);
 
-  if (selectedMovies.length !== SELECTION_LIMIT || !featuredMovie) {
+  if (selectedMovies.length !== SELECTION_LIMIT) {
     return (
       <>
         <Header />
@@ -176,6 +61,14 @@ export function Results() {
           <Footer />
         </main>
       </>
+    );
+  }
+
+  if (result.status !== "success" || !featuredMovie) {
+    return (
+      <PageShell>
+        <RecommendationStatus selected={selectedMovies} error={result.error} empty={result.status === "success"} onRetry={result.retry} />
+      </PageShell>
     );
   }
 
