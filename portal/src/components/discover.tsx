@@ -11,7 +11,7 @@ import {
 } from "@/core/constants/movie.constant";
 import type { Genre } from "@/core/domain/genre";
 import type { Movie } from "@/core/domain/movie";
-import { parseSelection } from "@/core/service/selection.service";
+import { parseSelection } from "@/lib/movies";
 import { buildAnalyzingUrl } from "@/routes/routes";
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";

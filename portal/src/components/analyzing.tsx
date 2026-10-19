@@ -10,7 +10,7 @@ import {
   ANALYSIS_TICK_MS,
   SELECTION_LIMIT,
 } from "@/core/constants/movie.constant";
-import { parseSelection } from "@/core/service/selection.service";
+import { parseSelection } from "@/lib/movies";
 import { buildResultsUrl, buildHomeWithFavoritesUrl } from "@/routes/routes";
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";

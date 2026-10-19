@@ -1,5 +1,5 @@
-import { getDataset } from "@/infrastructure/dataset/catalog.server";
-import { resolvePosterUrl } from "@/infrastructure/tmdb/tmdb.client";
+import { getDataset } from "@/lib/catalog.server";
+import { resolvePosterUrl } from "@/lib/tmdb";
 import { serverConfig } from "@/lib/config";
 import { CACHE_MAX_AGE_SECONDS } from "@/core/constants/tmdb.constant";
 

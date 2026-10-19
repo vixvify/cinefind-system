@@ -9,8 +9,7 @@ import {
   SELECTION_LIMIT,
 } from "@/core/constants/movie.constant";
 import type { RecommendedMovie } from "@/core/domain/movie";
-import { parseSelection } from "@/core/service/selection.service";
-import { recommend } from "@/core/service/recommendation.service";
+import { parseSelection, recommend } from "@/lib/movies";
 import { buildHomeWithFavoritesUrl } from "@/routes/routes";
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";
