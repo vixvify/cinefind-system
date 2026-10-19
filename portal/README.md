@@ -28,13 +28,13 @@ References: [TMDB authentication](https://developer.themoviedb.org/docs/authenti
 
 ## Docker Compose
 
-The repository's existing portal container only mounts `portal`. Add the read-only dataset mount with the supplied override, running from the repository root:
+The unified `compose.yaml` in the repository root mounts `./ai/data` at `/dataset` and configures `MOVIE_DATASET_PATH` automatically. Run from the repository root:
 
 ```sh
-docker compose -f compose.yaml -f portal/compose.dataset.yaml up --build portal
+docker compose up --build portal
 ```
 
-The override mounts `./ai/data` at `/dataset` and configures `MOVIE_DATASET_PATH`. The existing portal bind mount makes `portal/.env.local` available to Next.js. Recreate or restart the portal container after changing credentials. For other deployments, mount the CSV at a readable path and set `MOVIE_DATASET_PATH` accordingly.
+The portal bind mount makes `portal/.env.local` available to Next.js. Recreate or restart the portal container after changing credentials. For other deployments, mount the CSV at a readable path and set `MOVIE_DATASET_PATH` accordingly.
 
 ## Behavior and checks
 
