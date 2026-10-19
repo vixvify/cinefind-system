@@ -7,11 +7,13 @@ import { genreLabels, parseSelection, recommend, SELECTION_LIMIT } from "@/lib/m
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";
 import { SelectionRequired } from "./selection-required";
+import { useMovies } from "./catalog-provider";
 
 export function Results() {
+  const movies = useMovies();
   const params = useSearchParams();
-  const selected = parseSelection(params.get("favorites"));
-  const recommendations = recommend(selected);
+  const selected = parseSelection(params.get("favorites"), movies);
+  const recommendations = recommend(selected, movies);
   const [saved, setSaved] = useState<number[]>([]);
   const [showSaved, setShowSaved] = useState(false);
   const key = selected.map(movie => movie.id).join(",");

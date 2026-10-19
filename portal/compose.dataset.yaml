@@ -1,0 +1,8 @@
+# From the repository root:
+# docker compose -f compose.yaml -f portal/compose.dataset.yaml up --build portal
+services:
+  portal:
+    environment:
+      MOVIE_DATASET_PATH: /dataset/raw/tmdb_5000_movies.csv
+    volumes:
+      - ./ai/data:/dataset:ro

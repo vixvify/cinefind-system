@@ -23,7 +23,7 @@ export function Poster({
         <span>{movie.title}</span>
         <small>{movie.year}</small>
       </div>
-      {!failed && (
+      {!failed && movie.poster && (
         <img
           src={movie.poster}
           alt={`โปสเตอร์ ${movie.title}`}

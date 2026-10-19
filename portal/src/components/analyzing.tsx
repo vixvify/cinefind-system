@@ -7,12 +7,14 @@ import { parseSelection, SELECTION_LIMIT } from "@/lib/movies";
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";
 import { SelectionRequired } from "./selection-required";
+import { useMovies } from "./catalog-provider";
 
 const stages = ["กำลังดูแนวหนังที่คุณชอบ", "กำลังจับคู่หนัง", "ลิสต์ของคุณพร้อมแล้ว"];
 export function Analyzing() {
+  const movies = useMovies();
   const params = useSearchParams();
   const router = useRouter();
-  const selected = parseSelection(params.get("favorites"));
+  const selected = parseSelection(params.get("favorites"), movies);
   const key = selected.map(movie => movie.id).join(",");
   const valid = selected.length === SELECTION_LIMIT;
   const [progress, setProgress] = useState(0);

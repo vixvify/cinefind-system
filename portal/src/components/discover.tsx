@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 import {
-  movies,
+  browseGenres,
   genreLabels,
   parseSelection,
   SELECTION_LIMIT,
@@ -18,12 +18,14 @@ import {
 } from "@/lib/movies";
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";
+import { useMovies } from "./catalog-provider";
 
 export function Discover() {
+  const movies = useMovies();
   const router = useRouter();
   const params = useSearchParams();
   const [selected, setSelected] = useState<number[]>(() =>
-    parseSelection(params.get("favorites")).map((movie) => movie.id),
+    parseSelection(params.get("favorites"), movies).map((movie) => movie.id),
   );
   const [genre, setGenre] = useState<Genre | "all">("all");
   const [query, setQuery] = useState("");
@@ -95,7 +97,7 @@ export function Discover() {
               >
                 ทั้งหมด
               </button>
-              {(Object.keys(genreLabels) as Genre[]).map((item) => (
+              {browseGenres.map((item) => (
                 <button
                   key={item}
                   aria-pressed={genre === item}
