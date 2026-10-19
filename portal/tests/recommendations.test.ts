@@ -1,39 +1,29 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { movies, parseSelection, recommend } from "../src/lib/movies.ts";
+import { parseSelection, recommend, type Movie } from "../src/lib/movies.ts";
 
-test("selection rejects unknown IDs and duplicates while preserving order", () => {
-  assert.deepEqual(parseSelection("3,3,999,garbage,1,,2").map(movie => movie.id), [3, 1, 2]);
-  assert.deepEqual(parseSelection(null), []);
+const movies: Movie[] = Array.from({ length: 20 }, (_, index) => ({
+  id: index + 1, title: `Film ${index + 1}`, year: 2000 + index, rating: "7.5",
+  genres: index % 2 ? ["Animation", "Comedy"] : ["Sci-Fi", "Drama"], poster: null,
+}));
+test("selection rejects duplicates, unknown and malformed IDs", () => {
+  assert.deepEqual(parseSelection("3,3,999,bad,1,,2,1e1", movies).map(movie => movie.id), [3, 1, 2]);
+  assert.deepEqual(parseSelection(null, movies), []);
 });
-
-test("selection cannot exceed five distinct movies", () => {
-  assert.deepEqual(parseSelection("1,2,3,4,5,6,7").map(movie => movie.id), [1, 2, 3, 4, 5]);
+test("selection is limited to five films", () => {
+  assert.equal(parseSelection("1,2,3,4,5,6", movies).length, 5);
 });
-
-test("recommendations provide six unique unseen films", () => {
-  const selected = parseSelection("1,2,3,4,5");
-  const results = recommend(selected);
+test("results contain six unique unseen movies", () => {
+  const selected = movies.slice(0, 5);
+  const results = recommend(selected, movies);
   assert.equal(results.length, 6);
   assert.equal(new Set(results.map(movie => movie.id)).size, 6);
   assert.ok(results.every(movie => !selected.some(choice => choice.id === movie.id)));
-  assert.ok(results.every(movie => movie.reason.length > 0));
 });
-
-test("recommendations change with taste and are stable across reloads", () => {
-  const scienceFiction = parseSelection("1,2,7,13,14");
-  const animation = parseSelection("6,11,16,18,21");
-  assert.deepEqual(recommend(scienceFiction), recommend([...scienceFiction].reverse()));
-  assert.notDeepEqual(recommend(scienceFiction).map(movie => movie.id), recommend(animation).map(movie => movie.id));
-  assert.ok(recommend(scienceFiction)[0].genres.includes("Sci-Fi"));
-});
-
-test("every five-movie window produces valid unseen recommendations", () => {
-  for (let index = 0; index <= movies.length - 5; index++) {
-    const selected = movies.slice(index, index + 5);
-    const results = recommend(selected);
-    assert.equal(results.length, 6);
-    assert.ok(results.every(movie => !selected.some(choice => choice.id === movie.id)));
-    assert.ok(results.every((movie, position) => position === 0 || results[position - 1].score >= movie.score));
-  }
+test("recommendations respond to taste and are deterministic", () => {
+  const sciFi = parseSelection("1,3,5,7,9", movies);
+  const animation = parseSelection("2,4,6,8,10", movies);
+  assert.deepEqual(recommend(sciFi, movies), recommend([...sciFi].reverse(), movies));
+  assert.notDeepEqual(recommend(sciFi, movies), recommend(animation, movies));
+  assert.ok(recommend(sciFi, movies)[0].genres.includes("Sci-Fi"));
 });

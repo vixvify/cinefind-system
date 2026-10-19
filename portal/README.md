@@ -1,41 +1,53 @@
 # cinefind / portal
 
-Movie discovery UI built with **Next.js App Router, TypeScript, React, Tailwind CSS v4, and Lucide icons**. All portal application code lives in `/portal`. The sibling `/ai` directory is maintained separately; this portal uses only local mock data and does not integrate with it.
+Next.js App Router + TypeScript + Tailwind CSS. The portal reads the movie catalog from `../ai/data/raw/tmdb_5000_movies.csv` on the server. It never writes to `/ai` or calls the AI service. Recommendations remain a local genre-matching demo.
 
-## Run locally
+## Run
 
-Use Node.js 22.18+ (Node 24 recommended). The native TypeScript tests require this version.
+Use Node.js 22.18+ (24 recommended), and run from the `portal` directory:
 
 ```sh
-cd portal
 npm ci
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. The dataset must be present at runtime; it is not copied into the source tree or bundled with the app. An absolute or portal-relative `MOVIE_DATASET_PATH` in `.env.local` can override the default. Run `npm start` from `portal` after `npm run build` for production.
+
+## Poster setup
+
+The dataset includes TMDB movie IDs but **does not include poster paths**. Movie selection works without a key using title-card placeholders. To show real posters:
+
+1. Copy `.env.example` to `.env.local` inside `portal`.
+2. Obtain an **API Read Access Token** from [TMDB API settings](https://www.themoviedb.org/settings/api).
+3. Set `TMDB_READ_ACCESS_TOKEN` to that token. Alternatively, set `TMDB_API_KEY` to a v3 API key. If both are set, the token takes precedence.
+4. Restart the Next.js server and refresh the page.
+
+Do not prefix either variable with `NEXT_PUBLIC_`. `.env.local` is ignored by Git. Credentials are only used by the server. The browser requests `/api/posters/<tmdb-id>`; the route validates that the ID belongs to the dataset, gets its `poster_path`, and redirects to TMDB's image CDN. Successful lookups and redirects are cached for 24 hours. Missing images, invalid credentials, timeouts, and upstream errors fall back to the title card without breaking selection. No bulk download of all posters is performed.
+
+References: [TMDB authentication](https://developer.themoviedb.org/docs/authentication-application), [movie details](https://developer.themoviedb.org/reference/movie-details), [image URLs](https://developer.themoviedb.org/docs/image-basics).
+
+## Docker Compose
+
+The repository's existing portal container only mounts `portal`. Add the read-only dataset mount with the supplied override, running from the repository root:
+
+```sh
+docker compose -f compose.yaml -f portal/compose.dataset.yaml up --build portal
+```
+
+The override mounts `./ai/data` at `/dataset` and configures `MOVIE_DATASET_PATH`. The existing portal bind mount makes `portal/.env.local` available to Next.js. Recreate or restart the portal container after changing credentials. For other deployments, mount the CSV at a readable path and set `MOVIE_DATASET_PATH` accordingly.
+
+## Behavior and checks
+
+- Browse the real dataset, ordered by its stored popularity. Search titles, release years, and Thai genres. Load more in batches of 12; choose exactly five films.
+- URL selection IDs are now real TMDB IDs. Old demo links using IDs 1–24 may be invalid or refer to different movies. For example: `/results?favorites=157336,27205,19995,155,550`.
+- The four-second animation leads to six unseen recommendations. Ratings and years come from the historical dataset, not current TMDB scores. Recommendation order is still a deterministic UI demo, not the `/ai` recommender.
+- No full CSV, credits, or unused synopsis fields are sent to the browser. A compact catalog is shared through the root provider for search and matching. The server caches parsed data and reloads it when file size or modification time changes; refresh the browser to receive updates.
+- The temporary watchlist resets when leaving results. Fonts require Google Fonts connectivity and fall back to installed fonts.
 
 ```sh
 npm test
 npm run typecheck
 npm run build
-npm start
 ```
 
-If your Windows Node manager says no version is active, activate your installed Node version first (for example `nvm use 24.15.0`).
-
-## Experience
-
-- `/`: search 24 mock movies, filter by genre, and choose exactly five. Remove a choice using its card or the fixed selection bar. Load more to see all movies.
-- `/analyzing?favorites=1,2,3,4,5`: four-second animated sequence using the five selected posters, progress updates, and navigation to results. Cancel returns to the same selection.
-- `/results?favorites=1,2,3,4,5`: six unseen recommendations ranked by shared genres, reasons, and a temporary watchlist. Return to edit the original selection.
-- Incomplete or invalid selections show a recovery screen. Valid selection URLs can be refreshed or shared without losing the selected movies. Watchlist state lasts only for the current results view.
-
-## UI and data
-
-`src/lib/movies.ts` contains the catalog, query parsing, and deterministic mock genre matching. It does not call an AI service or require an API key. Ratings and summaries are illustrative demo content.
-
-Tailwind tokens are defined with `@theme` in `src/app/globals.css`. Shared component styles use Tailwind `@apply`; analysis/results layouts use utility classes directly. Only custom orbit/float animation keyframes and poster transforms use bespoke CSS. Reduced motion preferences disable animation.
-
-Posters load from TMDB's public image CDN. Fonts load from Google Fonts. Both require network access; local font and illustrated title-card fallbacks keep the UI usable if either is unavailable. This project is not endorsed by TMDB; poster artwork belongs to its respective owners.
-
-No authentication, database, streaming links, real AI, or deployment is included.
+Tests cover CSV quoting and malformed rows, selection validation, recommendations, and mocked TMDB credential/error handling. Live poster access additionally requires a valid personal TMDB credential and internet connectivity.
