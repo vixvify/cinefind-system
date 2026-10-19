@@ -6,11 +6,12 @@ import Link from "next/link";
 import { ArrowLeft, Bookmark, Check, RotateCcw, Star } from "lucide-react";
 import {
   genreLabels,
-  parseSelection,
-  recommend,
   SELECTION_LIMIT,
-  type RecommendedMovie,
-} from "@/lib/movies";
+} from "@/core/constants/movie.constant";
+import type { RecommendedMovie } from "@/core/domain/movie";
+import { parseSelection } from "@/core/service/selection.service";
+import { recommend } from "@/core/service/recommendation.service";
+import { buildHomeWithFavoritesUrl } from "@/routes/routes";
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";
 import { SelectionRequired } from "./selection-required";
@@ -146,8 +147,8 @@ export function Results() {
   const [savedIds, setSavedIds] = useState<number[]>([]);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
 
-  const favoritesKey = useMemo(() => {
-    return selectedMovies.map((movie) => movie.id).join(",");
+  const selectedIds = useMemo(() => {
+    return selectedMovies.map((movie) => movie.id);
   }, [selectedMovies]);
 
   const featuredMovie = recommendations[0];
@@ -189,7 +190,7 @@ export function Results() {
           </h1>
 
           <Link
-            href={`/?favorites=${favoritesKey}`}
+            href={buildHomeWithFavoritesUrl(selectedIds)}
             className="flex items-center gap-2 text-xs text-muted hover:text-paper"
           >
             <RotateCcw size={14} /> เลือกใหม่
@@ -255,7 +256,7 @@ export function Results() {
         </section>
 
         <Link
-          href={`/?favorites=${favoritesKey}`}
+          href={buildHomeWithFavoritesUrl(selectedIds)}
           className="mb-8 inline-flex items-center gap-2 text-xs text-muted hover:text-paper"
         >
           <ArrowLeft size={14} /> กลับไปแก้ไข 5 เรื่องที่เลือก

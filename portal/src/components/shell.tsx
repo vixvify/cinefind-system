@@ -2,6 +2,7 @@
 
 import { useRef, type MouseEvent } from "react";
 import Link from "next/link";
+import { APP_ROUTES } from "@/routes/routes";
 import {
   ArrowUpRight,
   Clapperboard,
@@ -38,7 +39,7 @@ export function Header() {
     <>
       <header className="site-header">
         <div className="header-inner">
-          <Link href="/" className="brand" aria-label="cinefind หน้าแรก">
+          <Link href={APP_ROUTES.HOME} className="brand" aria-label="cinefind หน้าแรก">
             <span className="brand-icon">
               <Clapperboard size={21} />
             </span>

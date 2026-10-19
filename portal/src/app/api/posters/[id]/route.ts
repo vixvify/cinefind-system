@@ -1,9 +1,9 @@
-import { getDataset } from "@/lib/catalog.server";
-import { resolvePosterUrl } from "@/lib/tmdb";
+import { getDataset } from "@/infrastructure/dataset/catalog.server";
+import { resolvePosterUrl } from "@/infrastructure/tmdb/tmdb.client";
+import { serverConfig } from "@/lib/config";
+import { CACHE_MAX_AGE_SECONDS } from "@/core/constants/tmdb.constant";
 
 export const runtime = "nodejs";
-
-const CACHE_MAX_AGE_SECONDS = 86400;
 
 function createUnavailableResponse(): Response {
   return new Response(null, {
@@ -37,12 +37,12 @@ export async function GET(
     return createUnavailableResponse();
   }
 
-  const token = process.env.TMDB_READ_ACCESS_TOKEN?.trim();
-  const apiKey = process.env.TMDB_API_KEY?.trim();
-
-  if (!token && !apiKey) {
+  if (!serverConfig.hasTmdbCredentials) {
     return createUnavailableResponse();
   }
+
+  const token = serverConfig.tmdbReadAccessToken;
+  const apiKey = serverConfig.tmdbApiKey;
 
   const movies = await getDataset();
   const existsInDataset = movies.some((movie) => movie.id === movieId);

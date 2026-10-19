@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Film } from "lucide-react";
-import type { Movie } from "@/lib/movies";
+import type { Movie } from "@/core/domain/movie";
 
 interface PosterProps {
   movie: Movie;

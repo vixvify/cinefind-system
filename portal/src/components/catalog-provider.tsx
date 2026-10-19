@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import type { Movie } from "@/lib/movies";
+import type { Movie } from "@/core/domain/movie";
 
 interface CatalogProviderProps {
   movies: Movie[];

@@ -6,12 +6,13 @@ import { ArrowDown, ArrowRight, Check, Plus, Search, X } from "lucide-react";
 import {
   browseGenres,
   genreLabels,
-  parseSelection,
   SELECTION_LIMIT,
   DEFAULT_PAGE_SIZE,
-  type Genre,
-  type Movie,
-} from "@/lib/movies";
+} from "@/core/constants/movie.constant";
+import type { Genre } from "@/core/domain/genre";
+import type { Movie } from "@/core/domain/movie";
+import { parseSelection } from "@/core/service/selection.service";
+import { buildAnalyzingUrl } from "@/routes/routes";
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";
 import { useMovies } from "./catalog-provider";
@@ -99,7 +100,8 @@ export function Discover() {
       const titleMatch = movie.title.toLowerCase().includes(normalizedQuery);
       if (titleMatch) return true;
 
-      const yearMatch = movie.year !== null && String(movie.year).includes(normalizedQuery);
+      const yearMatch =
+        movie.year !== null && String(movie.year).includes(normalizedQuery);
       if (yearMatch) return true;
 
       return movie.genres.some((genre) =>
@@ -142,7 +144,7 @@ export function Discover() {
   }, []);
 
   const handleProceed = useCallback(() => {
-    router.push(`/analyzing?favorites=${selectedIds.join(",")}`);
+    router.push(buildAnalyzingUrl(selectedIds));
   }, [router, selectedIds]);
 
   const heroMovies = useMemo(() => {
@@ -185,7 +187,9 @@ export function Discover() {
               className={`selection-count ${isSelectionReady ? "ready" : ""}`}
               aria-live="polite"
             >
-              <strong>{selectedIds.length} / {SELECTION_LIMIT}</strong>
+              <strong>
+                {selectedIds.length} / {SELECTION_LIMIT}
+              </strong>
             </span>
           </div>
 
@@ -268,7 +272,9 @@ export function Discover() {
             <button
               type="button"
               className="load-more"
-              onClick={() => setVisibleCount((prev) => prev + DEFAULT_PAGE_SIZE)}
+              onClick={() =>
+                setVisibleCount((prev) => prev + DEFAULT_PAGE_SIZE)
+              }
             >
               ดูหนังเพิ่มเติม <ArrowDown size={16} />
             </button>

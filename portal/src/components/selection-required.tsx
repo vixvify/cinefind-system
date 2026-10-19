@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Film } from "lucide-react";
+import { APP_ROUTES } from "@/routes/routes";
 
 export function SelectionRequired() {
   return (
@@ -10,7 +11,7 @@ export function SelectionRequired() {
         เรายังได้รับรายการไม่ครบ เลือกหนังที่ชอบก่อน
         แล้วมาค้นพบเรื่องโปรดเรื่องถัดไปกัน
       </p>
-      <Link href="/" className="primary-button">
+      <Link href={APP_ROUTES.HOME} className="primary-button">
         <ArrowLeft size={16} /> กลับไปเลือกหนัง
       </Link>
     </div>

@@ -4,28 +4,26 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
-import { parseSelection, SELECTION_LIMIT } from "@/lib/movies";
+import {
+  ANALYSIS_STAGES,
+  ANALYSIS_DURATION_MS,
+  ANALYSIS_TICK_MS,
+  SELECTION_LIMIT,
+} from "@/core/constants/movie.constant";
+import { parseSelection } from "@/core/service/selection.service";
+import { buildResultsUrl, buildHomeWithFavoritesUrl } from "@/routes/routes";
 import { Header, Footer } from "./shell";
 import { Poster } from "./poster";
 import { SelectionRequired } from "./selection-required";
 import { useMovies } from "./catalog-provider";
 
-const ANALYSIS_STAGES = [
-  "กำลังดูแนวหนังที่คุณชอบ",
-  "กำลังจับคู่หนัง",
-  "ลิสต์ของคุณพร้อมแล้ว",
-] as const;
-
-const TOTAL_DURATION_MS = 4000;
-const TICK_INTERVAL_MS = 100;
-
 export function Analyzing() {
   const movies = useMovies();
-  const params = useSearchParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
-  const selected = parseSelection(params.get("favorites"), movies);
-  const favoritesKey = selected.map((movie) => movie.id).join(",");
+  const selected = parseSelection(searchParams.get("favorites"), movies);
+  const selectedIds = selected.map((movie) => movie.id);
   const isValidSelection = selected.length === SELECTION_LIMIT;
 
   const [progress, setProgress] = useState(0);
@@ -33,13 +31,16 @@ export function Analyzing() {
   useEffect(() => {
     if (!isValidSelection) return;
 
-    const destinationUrl = `/results?favorites=${favoritesKey}`;
+    const destinationUrl = buildResultsUrl(selectedIds);
     router.prefetch(destinationUrl);
 
     const startTime = Date.now();
     const timerId = window.setInterval(() => {
       const elapsed = Date.now() - startTime;
-      const currentProgress = Math.min(100, Math.round((elapsed / TOTAL_DURATION_MS) * 100));
+      const currentProgress = Math.min(
+        100,
+        Math.round((elapsed / ANALYSIS_DURATION_MS) * 100),
+      );
 
       setProgress(currentProgress);
 
@@ -47,10 +48,10 @@ export function Analyzing() {
         window.clearInterval(timerId);
         router.replace(destinationUrl);
       }
-    }, TICK_INTERVAL_MS);
+    }, ANALYSIS_TICK_MS);
 
     return () => window.clearInterval(timerId);
-  }, [favoritesKey, isValidSelection, router]);
+  }, [selectedIds, isValidSelection, router]);
 
   if (!isValidSelection) {
     return (
@@ -113,7 +114,7 @@ export function Analyzing() {
           </div>
 
           <Link
-            href={`/?favorites=${favoritesKey}`}
+            href={buildHomeWithFavoritesUrl(selectedIds)}
             className="mt-8 inline-flex items-center gap-2 text-xs text-muted hover:text-paper"
           >
             <ArrowLeft size={13} /> กลับไปเลือกใหม่
