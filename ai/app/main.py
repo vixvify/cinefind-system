@@ -9,7 +9,9 @@ app = FastAPI(
 )
 
 recommender = ContentBasedRecommender(
-    "data/processed/movies.csv"
+    data_path="data/processed/movies.csv",
+    vectorizer_path="models/tfidf_vectorizer.pkl",
+    vectors_path="models/movie_vectors.pkl"
 )
 
 

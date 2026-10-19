@@ -1,23 +1,26 @@
+import joblib
 import pandas as pd
 
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
 class ContentBasedRecommender:
-    def __init__(self, data_path: str):
+    def __init__(
+        self,
+        data_path: str,
+        vectorizer_path: str,
+        vectors_path: str
+    ):
         self.movies = pd.read_csv(data_path)
 
-        self.tfidf = TfidfVectorizer(
-            max_features=5000,
-            stop_words="english"
-        )
+        self.tfidf = joblib.load(vectorizer_path)
+        self.vectors = joblib.load(vectors_path)
 
-        self.vectors = self.tfidf.fit_transform(
-            self.movies["tags"]
-        )
-
-    def recommend(self, title: str, top_k: int = 10):
+    def recommend(
+        self,
+        title: str,
+        top_k: int = 10
+    ):
         matches = self.movies[
             self.movies["title"].str.lower() == title.lower()
         ]
