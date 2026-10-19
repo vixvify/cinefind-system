@@ -66,9 +66,22 @@ export function Header() {
           </div>
         </div>
         <p className="demo-note">
-          ข้อมูลหนังจาก TMDB 5000 · ผลแนะนำยังใช้การจับคู่แนวหนัง ไม่ได้เชื่อมระบบ AI
+          ข้อมูลหนังจาก TMDB 5000 · ผลแนะนำยังใช้การจับคู่แนวหนัง
+          ไม่ได้เชื่อมระบบ AI
         </p>
-        <p className="mt-3 text-[10px] leading-5 text-muted"><a href="https://www.themoviedb.org" target="_blank" rel="noreferrer" className="text-lime">TMDB</a><br />This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+        <p className="mt-3 text-[10px] leading-5 text-muted">
+          <a
+            href="https://www.themoviedb.org"
+            target="_blank"
+            rel="noreferrer"
+            className="text-lime"
+          >
+            TMDB
+          </a>
+          <br />
+          This product uses the TMDB API but is not endorsed or certified by
+          TMDB.
+        </p>
       </dialog>
     </>
   );

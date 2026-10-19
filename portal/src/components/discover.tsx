@@ -1,14 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  ArrowDown,
-  ArrowRight,
-  Check,
-  Plus,
-  Search,
-  X,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, Check, Plus, Search, X } from "lucide-react";
 import {
   browseGenres,
   genreLabels,
@@ -56,7 +49,9 @@ export function Discover() {
       <main className="page discover-page">
         <section className="hero">
           <div className="hero-copy">
-            <h1>คืนนี้ <em>ดูอะไรดี?</em></h1>
+            <h1>
+              คืนนี้ <em>ดูอะไรดี?</em>
+            </h1>
             <p>เลือกหนังที่ชอบ 5 เรื่อง แล้วเจอเรื่องใหม่ที่ใช่</p>
           </div>
           <div className="hero-art" aria-hidden="true">
@@ -190,7 +185,11 @@ export function Discover() {
       <section className="selection-dock" aria-label="หนังที่เลือก">
         <div className="dock-inner">
           <div className="dock-intro">
-            <h3 aria-live="polite">{ready ? "ครบ 5 เรื่องแล้ว" : `เลือกอีก ${5 - selected.length} เรื่อง`}</h3>
+            <h3 aria-live="polite">
+              {ready
+                ? "ครบ 5 เรื่องแล้ว"
+                : `เลือกอีก ${5 - selected.length} เรื่อง`}
+            </h3>
           </div>
           <div className="selected-slots">
             {Array.from({ length: 5 }, (_, index) => {
