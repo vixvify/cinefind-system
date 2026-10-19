@@ -66,9 +66,9 @@ export function Header() {
           </div>
         </div>
         <p className="demo-note">
-          นี่คือ UI demo ใช้ข้อมูลจำลองและการจับคู่แนวหนังในเครื่อง ยังไม่มีระบบ
-          AI
+          ข้อมูลหนังจาก TMDB 5000 · ผลแนะนำยังใช้การจับคู่แนวหนัง ไม่ได้เชื่อมระบบ AI
         </p>
+        <p className="mt-3 text-[10px] leading-5 text-muted"><a href="https://www.themoviedb.org" target="_blank" rel="noreferrer" className="text-lime">TMDB</a><br />This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
       </dialog>
     </>
   );
@@ -103,7 +103,7 @@ export function Footer() {
       <span>
         cinefind<span className="brand-dot">.</span>
       </span>
-      <small>ข้อมูลจำลอง · ยังไม่มี AI</small>
+      <small>TMDB 5000 · ผลแนะนำจำลอง</small>
     </footer>
   );
 }
