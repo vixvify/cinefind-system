@@ -1,5 +1,6 @@
 import joblib
 import pandas as pd
+import numpy as np
 
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -30,7 +31,9 @@ class ContentBasedRecommender:
 
         selected_vectors = self.vectors[selected_indices]
 
-        preference_vector = selected_vectors.mean(axis=0)
+        preference_vector = np.asarray(
+            selected_vectors.mean(axis=0)
+        )
 
         scores = cosine_similarity(
             preference_vector,
