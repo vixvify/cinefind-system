@@ -16,7 +16,7 @@ class ContentBasedRecommender:
         self.tfidf = joblib.load(vectorizer_path)
         self.vectors = joblib.load(vectors_path)
 
-    def recommend(
+    def recommend_from_movies(
         self,
         movie_ids: list[int],
         top_k: int = 6
