@@ -15,8 +15,11 @@ interface RequestState {
 export function useRecommendations(selected: Movie[]) {
   const { result, saveResult } = useRecommendationCache();
   const [attempt, setAttempt] = useState(0);
-  const [requestState, setRequestState] = useState<RequestState>({ key: "", error: null });
-  const key = selected.map(movie => movie.id).join(",");
+  const [requestState, setRequestState] = useState<RequestState>({
+    key: "",
+    error: null,
+  });
+  const key = selected.map((movie) => movie.id).join(",");
   const valid = selected.length === SELECTION_LIMIT;
   const cached = result?.key === key ? result.movies : null;
 
@@ -38,14 +41,25 @@ export function useRecommendations(selected: Movie[]) {
             422: "AI ยังไม่รู้จักหนังบางเรื่อง ลองเปลี่ยนรายการหนัง",
             504: "ระบบใช้เวลานานกว่าปกติ ลองอีกครั้งได้เลย",
           };
-          throw new Error(messages[response.status] ?? "ยังเชื่อมต่อระบบแนะนำหนังไม่ได้ ลองอีกครั้งได้เลย");
+          throw new Error(
+            messages[response.status] ??
+              "ยังเชื่อมต่อระบบแนะนำหนังไม่ได้ ลองอีกครั้งได้เลย",
+          );
         }
         const data: RecommendationResult = await response.json();
-        if (!Array.isArray(data.recommendations)) throw new Error("ยังอ่านผลแนะนำไม่ได้ กรุณาลองอีกครั้ง");
-        if (!controller.signal.aborted) saveResult({ key, movies: data.recommendations });
+        if (!Array.isArray(data.recommendations))
+          throw new Error("ยังอ่านผลแนะนำไม่ได้ กรุณาลองอีกครั้ง");
+        if (!controller.signal.aborted)
+          saveResult({ key, movies: data.recommendations });
       } catch (error) {
         if (!controller.signal.aborted) {
-          setRequestState({ key, error: error instanceof Error ? error.message : "เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง" });
+          setRequestState({
+            key,
+            error:
+              error instanceof Error
+                ? error.message
+                : "เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง",
+          });
         }
       }
     }
@@ -56,11 +70,15 @@ export function useRecommendations(selected: Movie[]) {
 
   return {
     movies: cached ?? [],
-    status: cached ? "success" as const : requestState.key === key && requestState.error ? "error" as const : "loading" as const,
+    status: cached
+      ? ("success" as const)
+      : requestState.key === key && requestState.error
+        ? ("error" as const)
+        : ("loading" as const),
     error: requestState.key === key ? requestState.error : null,
     retry: () => {
       setRequestState({ key, error: null });
-      setAttempt(current => current + 1);
+      setAttempt((current) => current + 1);
     },
   };
 }
