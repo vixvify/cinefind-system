@@ -9,24 +9,24 @@ interface AiClientOptions {
 
 export function createAiClient(options: AiClientOptions, request: typeof fetch = fetch): RecommendationSource {
   return {
-    async findSimilar(title, limit, signal) {
+    async recommend(movieIds, limit, signal) {
       const timeout = AbortSignal.timeout(options.timeoutMs ?? 10_000);
       const url = new URL(`${options.baseUrl.replace(/\/$/, "")}/recommendations`);
-      url.searchParams.set("title", title);
-      url.searchParams.set("limit", String(limit));
 
       try {
         const response = await request(url, {
-          headers: { Accept: "application/json" },
+          method: "POST",
+          headers: { Accept: "application/json", "Content-Type": "application/json" },
+          body: JSON.stringify({ movie_ids: movieIds, limit }),
           cache: "no-store",
           signal: AbortSignal.any([signal, timeout]),
         });
-        if (response.status === 404) throw new RecommendationError("MOVIE_NOT_SUPPORTED");
+        if (response.status === 404 || response.status === 422) throw new RecommendationError("MOVIE_NOT_SUPPORTED");
         if (!response.ok) throw new RecommendationError("AI_UNAVAILABLE");
         const payload: unknown = await response.json().catch(() => {
           throw new RecommendationError("INVALID_AI_RESPONSE");
         });
-        return parseAiRecommendations(payload, title, limit);
+        return parseAiRecommendations(payload, limit);
       } catch (error) {
         if (signal.aborted) throw error;
         if (timeout.aborted) throw new RecommendationError("AI_TIMEOUT");

@@ -18,9 +18,9 @@ export function parseRecommendationInput(value: unknown): number[] {
   return ids;
 }
 
-export function parseAiRecommendations(value: unknown, title: string, limit: number): SimilarMovie[] {
+export function parseAiRecommendations(value: unknown, limit: number): SimilarMovie[] {
   if (
-    !isRecord(value) || value.movie !== title ||
+    !isRecord(value) ||
     !Array.isArray(value.recommendations) || value.recommendations.length > limit
   ) {
     throw new RecommendationError("INVALID_AI_RESPONSE");

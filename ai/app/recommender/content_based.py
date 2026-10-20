@@ -18,36 +18,40 @@ class ContentBasedRecommender:
 
     def recommend(
         self,
-        title: str,
-        top_k: int = 10
+        movie_ids: list[int],
+        top_k: int = 6
     ):
-        matches = self.movies[
-            self.movies["title"].str.lower() == title.lower()
-        ]
+        selected_indices = self.movies.index[
+            self.movies["movie_id"].isin(movie_ids)
+        ].tolist()
 
-        if matches.empty:
+        if len(selected_indices) != len(movie_ids):
             return []
 
-        movie_index = matches.index[0]
+        selected_vectors = self.vectors[selected_indices]
+
+        preference_vector = selected_vectors.mean(axis=0)
 
         scores = cosine_similarity(
-            self.vectors[movie_index],
+            preference_vector,
             self.vectors
         ).flatten()
 
         ranked_indices = scores.argsort()[::-1]
 
+        selected_ids = set(movie_ids)
         recommendations = []
 
         for index in ranked_indices:
-            if index == movie_index:
+            movie = self.movies.iloc[index]
+            movie_id = int(movie["movie_id"])
+
+            if movie_id in selected_ids:
                 continue
 
             recommendations.append({
-                "movie_id": int(
-                    self.movies.iloc[index]["movie_id"]
-                ),
-                "title": self.movies.iloc[index]["title"],
+                "movie_id": movie_id,
+                "title": movie["title"],
                 "score": round(float(scores[index]), 3)
             })
 

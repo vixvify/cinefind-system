@@ -23,7 +23,6 @@ export function useRecommendations(selected: Movie[]) {
   useEffect(() => {
     if (!valid || cached) return;
     const controller = new AbortController();
-    setRequestState({ key, error: null });
 
     async function load() {
       try {

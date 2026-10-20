@@ -1,6 +1,5 @@
 import {
   RECOMMENDATION_LIMIT,
-  SELECTION_LIMIT,
 } from "../constants/movie.constant.ts";
 import type { Movie, RecommendedMovie } from "../domain/movie.ts";
 import type { RecommendationSource } from "../ports/recommendation-source.ts";
@@ -29,45 +28,21 @@ export function createRecommendationService({
       if (selected.some((movie) => !movie))
         throw new RecommendationError("INVALID_SELECTION");
 
-      const controller = new AbortController();
-      const requestSignal = AbortSignal.any([signal, controller.signal]);
-      const candidateLimit = RECOMMENDATION_LIMIT + SELECTION_LIMIT;
-      try {
-        const batches = await Promise.all(
-          selected.map(async (movie) => {
-            if (!movie) throw new RecommendationError("INVALID_SELECTION");
-            const candidates = await source.findSimilar(
-              movie.title,
-              candidateLimit,
-              requestSignal,
-            );
-            return { seed: movie, candidates };
-          }),
-        );
-        const selectedIds = new Set(ids);
-        const byId = new Map<number, RecommendedMovie>();
-
-        for (const { seed, candidates } of batches) {
-          for (const candidate of candidates) {
-            const movie = catalog.get(candidate.movieId);
-            if (!movie || selectedIds.has(movie.id)) continue;
-            const previous = byId.get(movie.id);
-            if (!previous || candidate.score > previous.score) {
-              byId.set(movie.id, {
-                ...movie,
-                score: candidate.score,
-                reason: `ใกล้เคียงกับ ${seed.title}`,
-              });
-            }
-          }
-        }
-        return [...byId.values()]
-          .sort((a, b) => b.score - a.score || a.id - b.id)
-          .slice(0, RECOMMENDATION_LIMIT);
-      } catch (error) {
-        controller.abort();
-        throw error;
+      const candidates = await source.recommend(ids, RECOMMENDATION_LIMIT, signal);
+      const selectedIds = new Set(ids);
+      const results: RecommendedMovie[] = [];
+      const seen = new Set<number>();
+      for (const candidate of candidates) {
+        const movie = catalog.get(candidate.movieId);
+        if (!movie || selectedIds.has(movie.id) || seen.has(movie.id)) continue;
+        seen.add(movie.id);
+        results.push({
+          ...movie,
+          score: candidate.score,
+          reason: "จากหนัง 5 เรื่องที่คุณเลือก",
+        });
       }
+      return results;
     },
   };
 }
